@@ -41,7 +41,14 @@ def procesar_productos(lista_productos):
             if laSopa:
                 tabla = laSopa.find('table')
                 if tabla:
-                    info_producto = {fila.find_all('td')[0].get_text(strip=True): fila.find_all('td')[1].get_text(strip=True) for fila in tabla.find_all('tr') if len(fila.find_all('td')) == 2}
+                    info_producto = {}
+                    for fila in tabla.find_all('tr'):
+                        celdas = fila.find_all('td')
+                        
+                        if len(celdas) == 2:  # Solo procesar las filas con 2 celdas
+                            clave = celdas[0].get_text(strip=True)
+                            valor = celdas[1].get_text(strip=True)
+                            info_producto[clave] = valor 
                     productos_detallados.append({"NOMBRE": dic["NOMBRE"], "DETALLES": info_producto})
         except Exception as e:
             print(f"Error al procesar el producto {dic['NOMBRE']}: {e}")
@@ -82,3 +89,4 @@ def filtrar_productos_cultivo(productos_procesados, tipo_cultivo):
         if tipo_cultivo in cultivo:
             productos_filtrados.append(producto["NOMBRE"])
     return productos_filtrados
+
